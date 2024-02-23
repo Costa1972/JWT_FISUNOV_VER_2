@@ -6,7 +6,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import ru.costa.JWT_FISUNOV_VER_2.dtos.RegistrationUserDto;
 import ru.costa.JWT_FISUNOV_VER_2.entities.User;
 import ru.costa.JWT_FISUNOV_VER_2.repositories.UserRepository;
 
@@ -15,11 +18,17 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+
+    public UserService(UserRepository userRepository, RoleService roleService) {
+        this.userRepository = userRepository;
+        this.roleService = roleService;
+        this.passwordEncoder = new BCryptPasswordEncoder(16);
+    }
 
     public Optional<User> findUserInDBByName(String username) {
         return userRepository.findUserByUsername(username);
@@ -30,7 +39,7 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = findUserInDBByName(username).orElseThrow(() -> new UsernameNotFoundException(
-              String.format("Пользователь '%s' не найден", username)
+                String.format("Пользователь '%s' не найден", username)
         ));
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
@@ -39,9 +48,12 @@ public class UserService implements UserDetailsService {
         );
     }
 
-    public void createNewUser(User user) {
-        if (roleService.findRoleByName("ROLE_USER").isPresent()) {
-            user.setRoles(List.of(roleService.findRoleByName("ROLE_USER").get()));
-        }
+    public User createNewUser(RegistrationUserDto registrationUserDto) {
+        User user = new User();
+        user.setUsername(registrationUserDto.getUsername());
+        user.setPassword(passwordEncoder.encode(registrationUserDto.getPassword()));
+        user.setEmail(registrationUserDto.getEmail());
+        user.setRoles(List.of(roleService.getUserRole().get()));
+        return userRepository.save(user);
     }
 }
