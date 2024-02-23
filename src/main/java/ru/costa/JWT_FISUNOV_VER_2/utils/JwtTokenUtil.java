@@ -48,11 +48,12 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-    public String getUsernameFromClaims(String token) {
+
+    public String getUsername(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }
 
-    public List<?> getRolesFromClaims(String token) {
+    public List<String> getRoles(String token) {
         return getAllClaimsFromToken(token).get("roles", List.class);
     }
 
