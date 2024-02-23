@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -18,9 +19,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtTokenUtil {
 
+    @Value("${jwt.secret}")
     private String secret = "secret";
-
-
+    @Value("${jwt.lifetime}")
     private Duration jwtLifetime = Duration.ofDays(30);
 
     public JwtTokenUtil(String secret, Duration jwtLifetime) {
