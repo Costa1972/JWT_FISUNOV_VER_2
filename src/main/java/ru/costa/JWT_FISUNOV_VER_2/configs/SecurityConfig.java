@@ -23,7 +23,7 @@ import ru.costa.JWT_FISUNOV_VER_2.services.UserService;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-@EnableMethodSecurity(securedEnabled = true)
+//@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     private final UserService userService;
