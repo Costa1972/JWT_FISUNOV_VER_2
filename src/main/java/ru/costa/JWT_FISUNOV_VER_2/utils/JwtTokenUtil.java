@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @autor Costa Vashchuk
+ * @author Costa Vashchuk
  * Утилитный класс для работы с токеном
  */
 @Component
