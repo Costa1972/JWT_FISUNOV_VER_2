@@ -16,8 +16,11 @@ import ru.costa.JWT_FISUNOV_VER_2.entities.User;
 import ru.costa.JWT_FISUNOV_VER_2.errors.AppError;
 import ru.costa.JWT_FISUNOV_VER_2.utils.JwtTokenUtil;
 
+/**
+ * @author Costa Vashchuk
+ * Сервисный класс, позволяющий вынести методы из AuthController'a
+ */
 @Service
-
 public class AuthService {
 
     private final UserService userService;

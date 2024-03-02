@@ -35,6 +35,11 @@ public class UserService implements UserDetailsService {
     }
 
 
+    /**
+     * @throws UsernameNotFoundException
+     * Вытаскиваем из БД пользователя и строим из него спрингового пользователя
+     * , т.к. кроме username, password и roles нам для аутентификации и авторизации больше никаких данных не требуется
+     */
     @Transactional
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -55,5 +60,9 @@ public class UserService implements UserDetailsService {
         user.setEmail(registrationUserDto.getEmail());
         user.setRoles(List.of(roleService.getUserRole().get()));
         return userRepository.save(user);
+    }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 }

@@ -15,6 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * @autor Costa Vashchuk
+ * Утилитный класс для работы с токеном
+ */
 @Component
 @RequiredArgsConstructor
 public class JwtTokenUtil {
@@ -24,13 +28,10 @@ public class JwtTokenUtil {
     @Value("${jwt.lifetime}")
     private Duration jwtLifetime = Duration.ofDays(30);
 
-    public JwtTokenUtil(String secret, Duration jwtLifetime) {
-        this.secret = secret;
-        this.jwtLifetime = jwtLifetime;
-    }
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+        // Получаем роли в виде строк из Authorities и складываем в List
         List<String> roleList = userDetails
                 .getAuthorities()
                 .stream()
@@ -39,7 +40,7 @@ public class JwtTokenUtil {
         claims.put("roles", roleList);
         Date issuedTime = new Date();
         Date expiredTime = new Date(issuedTime.getTime() + jwtLifetime.toMillis());
-
+        // Генерируем и возвращаем токен
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
@@ -50,17 +51,20 @@ public class JwtTokenUtil {
     }
 
 
+    // вытаскиваем из тела токена username
     public String getUsername(String token) {
         return getAllClaimsFromToken(token).getSubject();
     }
 
+    // вытаскиваем из тела токена роли
     public List<String> getRoles(String token) {
         return getAllClaimsFromToken(token).get("roles", List.class);
     }
 
+    // метод разбора токена
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(secret)
+                .setSigningKey(secret) // добавляем строку с "секретом" для азбора токена
                 .parseClaimsJws(token)
                 .getBody();
     }
